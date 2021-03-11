@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Filtros</title>
+    <link rel="stylesheet" href="styles/index.css">
+  </head>
+  <body>
+      <ul>
+        <li><a id="btnAInput">
+          <label for="btnInput">Cargar imagen</label>
+          <input id="btnInput" type="file" onchange="main()" placeholder="Cargar imagen">
+        </a></li>
+        <li>
+          <a id="btnGuardar" type="button" name="guardar" onclick="guardar()">
+            Guardar
+          </a>
+        </li>
+        <li class="dropdown">
+          <a class="dropbtn">Colores</a>
+          <div class="dropdown-content">
+              <a id="btnBlue" type="button" name="blue">Azul</a>
+              <a id="btnRed" type="button" name="red">Rojo</a>
+              <a id="btnGreen" type="button" name="green">Verde</a>
+          </div>
+        </li>
+        <li class="dropdown">
+          <a class="dropbtn">Escala de Grises</a>
+          <div class="dropdown-content">
+              <a id="btnGray1" type="button" name="gray">Gris 1</a>
+              <a id="btnGray2" type="button" name="gray">Gris 2</a>
+              <a id="btnGray3" type="button" name="gray">Gris 3</a>
+              <a id="btnGray4" type="button" name="gray">Gris 4</a>
+              <a id="btnGray5" type="button" name="gray">Gris 5</a>
+              <a id="btnGray6" type="button" name="gray">Gris 6</a>
+              <a id="btnGray7" type="button" name="gray">Gris 7</a>
+              <a id="btnGray8" type="button" name="gray">Gris 8</a>
+              <a id="btnGray9" type="button" name="gray">Gris 9</a>
+          </div>
+        </li>
+        <li class="dropdown">
+          <a class="dropbtn">Otros</a>
+          <div class="dropdown-content">
+              <a id="btnBrillo" type="button" name="invert">Brillo</a>
+              <a id="btnPixel" type="button" name="pixel">Mosaico</a>
+          </div>
+        </li>
+        <li>
+          <a id="btnReset" type="button" name="reset">Reset</a>
+        </li>
+     </ul>
+       <div id="info">
+            <h1></h1>
+            <p></p>
+        </div>
+        <div id="index"> Da click en "Cargar imagen" para aplicar un filtro</div>
+       <div class="comparar">
+        <img id="img">
+        <canvas id="canvi"></canvas>
+       </div> 
+  </body>
+  <script src="scripts/Filter.js" charset="utf-8"></script>
+  <script src="scripts/index.js" charset="utf-8"></script>
+</html>
