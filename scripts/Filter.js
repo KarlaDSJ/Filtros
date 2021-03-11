@@ -18,7 +18,6 @@ class Filter {
     this.img = img;
     this.width = img.width;
     this.height = img.height;
-    console.log(this.width +" x "+ this.height);
     this.nPixels = this.width*this.height;//Número de pixeles
 
     this.canvas = canvas;
@@ -128,7 +127,8 @@ class Filter {
   /**
      * @desc Calcula el promedio del color de los pixeles
      *       en un cuadrado de long * long
-     * @param {number} long - Longitud del cuadrado
+     * @param {number} radio[0] - Ancho del cuadrado
+     * @param {number} radio[1] - Alto del cuadrado
      * @param {number} alfa - Punto de inicio del cuadrado coordenada x
      * @param {number} beta - Punto de inicio del cuadrado coordenada y
      * @return {Array} - Arreglo con el promedio del cuadrado por colores
@@ -136,11 +136,11 @@ class Filter {
      *                 [1] - promedio del color verde
      *                 [2] - promedio del color azul
    */
-  _avarage(long, alfa, beta){
+  _avarage(radio, alfa, beta){
       let suma = [0, 0, 0];//Suma: sum[0]-rojo, sum[1]-verde, sum[2]-azul
-      let numElem = long * long;
-      for (var i = 0; i < long; i ++)
-          for (var j = 0; j < long; j++) {
+      let numElem = radio[0] * radio[1];
+      for (var i = 0; i < radio[0]; i ++)
+          for (var j = 0; j < radio[1]; j++) {
               var site = this.width * (beta + i) + alfa + j;
               suma[0] += this.red[site];
               suma[1] += this.green[site];
@@ -158,26 +158,27 @@ class Filter {
      *                 [0] - promedio del color rojo
      *                 [1] - promedio del color verde
      *                 [2] - promedio del color azul
-     * @param {number} beta - Punto de inicio del cuadrado coordenada y
-     * @param {number} long - Longitud del cuadrado
+     * @param {number} radio[0] - Ancho del cuadrado
+     * @param {number} radio[1] - Alto del cuadrado
    */
- _pixel(alfa, beta, prom, long){
+ _pixel(alfa, beta, prom, radio){
      let rgb = "rgb("+prom[0]+ ","+prom[1]+ ","+prom[2]+")";
      this.canvasContext.fillStyle = rgb;
-     this.canvasContext.fillRect(alfa, beta, long, long);
+     this.canvasContext.fillRect(alfa, beta, radio[0], radio[1]);
  }
 
  /**
-    * @desc Crea cuadrantes de long * long  para pixelar la imagen
+    * @desc Crea cuadrantes de ancho * alto  para pixelar la imagen
     *       El resultado se muestra en el objeto canvas del html
-    * @param {number} long - Longitud del cuadrado
+    * @param {number} radio[0] - Ancho del cuadrado
+    * @param {number} radio[1] - Alto del cuadrado
   */
-  doMosaic(long){
+  doMosaic(radio){
       let prom;
-      for (var alfa = 0; alfa < this.width; alfa += long)
-          for (var beta = 0; beta < this.height; beta += long) {
-              prom = this._avarage(long, alfa, beta);
-              this._pixel(alfa, beta, prom, long);
+      for (var alfa = 0; alfa < this.width; alfa += radio[0])
+          for (var beta = 0; beta < this.height; beta += radio[1]) {
+              prom = this._avarage(radio, alfa, beta);
+              this._pixel(alfa, beta, prom, radio);
           }
   }
 

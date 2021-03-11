@@ -37,10 +37,13 @@ function loadImage(){
    * @desc Se establece la longitud del cuadrante
  */
 function setRadio(){
-    let radio = 3;
-    let boxR = parseInt(prompt("Tamaño de la casilla", "3"));
-    if(!isNaN(boxR))
-        radio = boxR < 3 || img.width < boxR? 3: boxR;
+    let radio = [3, 3];
+    radio[0] = parseInt(prompt("Ancho del mosaico", "3"));
+    radio[1] = parseInt(prompt("Alto del mosaico", "3"));
+    if(!isNaN(radio[0]))
+      radio[0] = radio[0] < 3 || img.width < radio[0]? 3: radio[0];
+    if(!isNaN(radio[1]))
+      radio[1] = radio[1] < 3 || img.height < radio[1]? 3: radio[1];
     return radio;
 }
 
@@ -74,7 +77,7 @@ function validarRango(valor){
 async function main() {
   await loadImage();
   let f = new Filter(img, canvas);
-  let radio = 3;
+  let radio = [3, 3];
   let cte = 50;
 
   //Brillo inical y botón para modificarlo
@@ -97,8 +100,7 @@ async function main() {
   btnPixel.onclick = () => {
     info.childNodes[1].innerHTML = "Mosaico";
     radio = setRadio();
-    info.childNodes[3].innerHTML = "Tamaño del mosaico: "+ radio +"<br> Para cambiar el tamaño del mosaico selecciona nuevamente esta opción";
-    console.log(radio);
+    info.childNodes[3].innerHTML = "Tamaño del mosaico: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño del mosaico selecciona nuevamente esta opción";
     f.doMosaic(radio);
   };
 
