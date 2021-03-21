@@ -91,38 +91,36 @@ class Filter {
   }
 
   /**
-     * @desc Modifica los colores de cada pixel
-     *       Muestra el resultado en el objeto canvas del html
-     * @param {function} cb - función que especifica la modificación
-     *                   que se le hará a cada color del pixel
-   */
-  setColor(cb){
-    let red = Uint8ClampedArray.from(this.red);
-    let green = Uint8ClampedArray.from(this.green);
-    let blue = Uint8ClampedArray.from(this.blue);
-    cb(red, green, blue);
-    this._setFromRGB(red, green, blue);
+   * @desc Valida que el valor este ente 0 y 255
+   * @return {number} valor RGB del pixel
+ */
+  _validarRango(valor){
+    if(valor < 0)
+      valor = 0
+    else if(valor > 255)
+      valor = 255
+
+    return valor;
   }
 
   /**
-     * @desc Multiplica los colores de cada pixel por los valores dados
+     * @desc Modifica los colores de cada pixel
      *       Muestra el resultado en el objeto canvas del html
-     * @param {number} redVal - valor que multiplicará el color rojo del pixel
-     * @param {number} greenVal - valor que multiplicará el color verde
-     *                            del pixel
-     * @param {number} blueVal - valor que multiplicará el color azul del pixel
+     * @param {function} f - función que especifica la modificación
+     *                   que se le hará a cada color del pixel
    */
-  multiplyValues(redVal, greenVal, blueVal){
+   doPerPixel(f){
     let red = Uint8ClampedArray.from(this.red);
     let green = Uint8ClampedArray.from(this.green);
     let blue = Uint8ClampedArray.from(this.blue);
-    for(var alfa = 0; alfa < this.red.length;alfa++){
-      red[alfa] = red[alfa] * redVal;
-      green[alfa] = green[alfa] * greenVal;
-      blue[alfa] = blue[alfa] * blueVal;
+    for(var alfa = 0; alfa < red.length; alfa++){
+      let v = f(red[alfa], green[alfa], blue[alfa]);
+      red[alfa] = this._validarRango(v[0]);
+      green[alfa] = this._validarRango(v[1]);
+      blue[alfa] = this._validarRango(v[2]);
     }
     this._setFromRGB(red, green, blue);
-  }
+   }
 
   /**
      * @desc Calcula el promedio del color de los pixeles
@@ -183,16 +181,57 @@ class Filter {
   }
 
   /**
-     * @desc Funcion generica para aplicar escala de grises
-     * @param {function} f - función que especifica la modificación
-     * que se le hará a cada del pixel según la escala de grises seleccionada
-   */
-  greyScaleGen(f){
-    this.setColor((r,g,b)=>{
-      for(var alfa=0; alfa<r.length;alfa++){
-        let v = f(r[alfa],g[alfa],b[alfa]);
-        r[alfa] = g[alfa] = b[alfa] = v;
+    * @desc Calcula el factor de la matriz de convolución 
+    * @param {Array} matrix - Matriz de convolución 
+    * @return {number} regresa el factor de la matriz, si la suma es
+    * mayor a 1 se divide 
+  */
+  _getFactor(matrix){
+    let suma = 0
+    for (var alfa = 0; alfa < matrix.length; alfa ++)
+      for (var beta = 0; beta < matrix.length; beta ++) {
+          suma += matrix[alfa][beta];
       }
-    });
+    suma = suma == 0? 1: 1 / suma;
+    return suma;
+  }
+
+  _applyMatrix(matrix, alfa, beta) {
+    let valor = [0, 0, 0]; // [0] - r, [1] - g, [2] - b
+    var length = matrix.length;
+    for (var i = 0; i < length; i ++)
+      for (var j = 0; j < length; j++) {
+        var x = (alfa + i - Math.trunc(length/2));
+        var y = (beta + j - Math.trunc(length/2));
+        var site = this.width * x + y;
+        valor[0] += this.red[site] * matrix[i][j];
+        valor[1] += this.green[site] * matrix[i][j];
+        valor[2] += this.blue[site] * matrix[i][j];
+      }
+    return valor;
+  }
+
+  /**
+    * @desc Aplica una matriz de convolución a cada pixel
+    * @param {Array} matrix - Matriz de convolución 
+    * @param {number} biaas - Brillo de la imagen
+  */
+  doConvolution(matrix, bias = 0){
+    let factor = this._getFactor(matrix);
+    let red = Uint8ClampedArray.from(this.red);
+    let green = Uint8ClampedArray.from(this.green);
+    let blue = Uint8ClampedArray.from(this.blue);
+    console.log(factor);
+    for (var i = 0; i < this.nPixels; i ++){
+      //Calculamos alto y ancho (ubicación del pixel)
+      var h = Math.trunc(i / this.height);
+      var w = i % this.height;
+      var valor =  this._applyMatrix(matrix, w, h); //aplicamos la matriz
+      //Asignamos los nuevos valores
+      red[w * this.width + h] = this._validarRango(factor * valor[0] + bias);
+      green[w * this.width + h] = this._validarRango(factor * valor[1] + bias);
+      blue[w * this.width + h] = this._validarRango(factor * valor[2] + bias);
+    }
+    this._setFromRGB(red, green, blue);
   }
 }

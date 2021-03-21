@@ -22,20 +22,32 @@
               <a id="btnBlue" type="button" name="blue">Azul</a>
               <a id="btnRed" type="button" name="red">Rojo</a>
               <a id="btnGreen" type="button" name="green">Verde</a>
+              <a id="btnRGB" type="button" name="RGB">RGB</a>
           </div>
         </li>
         <li class="dropdown">
           <a class="dropbtn">Escala de Grises</a>
           <div class="dropdown-content">
-              <a id="btnGray1" type="button" name="gray">Gris 1</a>
-              <a id="btnGray2" type="button" name="gray">Gris 2</a>
-              <a id="btnGray3" type="button" name="gray">Gris 3</a>
-              <a id="btnGray4" type="button" name="gray">Gris 4</a>
-              <a id="btnGray5" type="button" name="gray">Gris 5</a>
-              <a id="btnGray6" type="button" name="gray">Gris 6</a>
-              <a id="btnGray7" type="button" name="gray">Gris 7</a>
-              <a id="btnGray8" type="button" name="gray">Gris 8</a>
-              <a id="btnGray9" type="button" name="gray">Gris 9</a>
+              <a id="btnGray1" type="button" name="gray1">Gris 1</a>
+              <a id="btnGray2" type="button" name="gray2">Gris 2</a>
+              <a id="btnGray3" type="button" name="gray3">Gris 3</a>
+              <a id="btnGray4" type="button" name="gray4">Gris 4</a>
+              <a id="btnGray5" type="button" name="gray5">Gris 5</a>
+              <a id="btnGray6" type="button" name="gray6">Gris 6</a>
+              <a id="btnGray7" type="button" name="gray7">Gris 7</a>
+              <a id="btnGray8" type="button" name="gray8">Gris 8</a>
+              <a id="btnGray9" type="button" name="gray9">Gris 9</a>
+          </div>
+        </li>
+        <li class="dropdown">
+          <a class="dropbtn">Convolución</a>
+          <div class="dropdown-content">
+            <a id="btnBlur1" type="button" name="Blur1">Blur 1</a>
+            <a id="btnBlur2" type="button" name="Blur2">Blur 2</a>
+            <a id="btnMotion" type="button" name="Motion">Motion Blur</a>
+            <a id="btnBordes" type="button" name="Bordes">Encontrar bordes</a>
+            <a id="btnSharpen" type="button" name="Sharpen">Sharpen</a>
+            <a id="btnEmboss" type="button" name="Emboss">Emboss</a>
           </div>
         </li>
         <li class="dropdown">
@@ -43,6 +55,8 @@
           <div class="dropdown-content">
               <a id="btnBrillo" type="button" name="invert">Brillo</a>
               <a id="btnPixel" type="button" name="pixel">Mosaico</a>
+              <a id="btnContraste" type="button" name="contraste">Alto Contraste</a>
+              <a id="btnInverso" type="button" name="inverso">Alto Contraste (inverso)</a>
           </div>
         </li>
         <li>
@@ -53,6 +67,24 @@
             <h1></h1>
             <p></p>
         </div>
+
+        <div class="slidecontainer">
+          <div id="slideUno">
+            <label for="rojoSlide">Rojo</label>
+            <input type="range" min="0" max="255" value="50" id="rojoSlide">
+          </div>
+          <div id="slideDos">
+            <label for="verdeSlide">Verde</label>
+            <input type="range" min="0" max="255" value="20" id="verdeSlide">
+          </div>
+          <div id="slideTres">
+            <label for="azulSlide">Azul</label>
+            <input type="range" min="0" max="255" value="10" id="azulSlide"> 
+          </div>
+          
+          <a id="btnProbar" type="button"> Probar </a><br>  
+        </div>
+
         <div id="index"> Da click en "Cargar imagen" para aplicar un filtro</div>
        <div class="comparar">
         <img id="img">

@@ -28,7 +28,7 @@ li a, .dropbtn {
   text-decoration: none;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
+li a:hover, .dropdown:hover .dropbtn, #btnProbar:hover {
   background-color: grey;
   cursor: pointer;
 }
@@ -37,7 +37,7 @@ li.dropdown {
   display: inline-block;
 }
 
-#info{
+#info, .slidecontainer{
   display: none;
 }
 
@@ -74,7 +74,7 @@ li.dropdown {
  * Esconder Select a file: browse
  */
 
-label {
+#btnAInput > label {
    cursor: pointer;
    color: white;
 }
@@ -103,8 +103,24 @@ label {
   width: 49%;
 }
 
+/**
+ * Estilo del texto y slides
+ */
 #index{
     text-align: center;
     padding-top: 10%;
     font-size: 25px;
 }
+
+#btnProbar{
+  background-color: #333;
+  color: #f1f1f1;
+  border-radius: 10%;
+  height: 20px;
+  padding: 5px;
+}
+
+label{
+  color: black;
+}
+
