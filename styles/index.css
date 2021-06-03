@@ -1,8 +1,23 @@
+@font-face {
+  font-family: fDominoB;
+  src: url(fonts/fDominoB.ttf);
+}
+
+@font-face {
+  font-family: fDominoN;
+  src: url(fonts/fDominoN.ttf);
+}
+
+@font-face {
+  font-family: fNaipes;
+  src: url(fonts/fNaipes.ttf);
+}
+
 /**
  * Estilo para el menú
  * Desplegar opciones de filtro
  */
-body{
+ body{
   margin: 0;
   padding: 0;
   text-align: center;
