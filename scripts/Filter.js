@@ -137,9 +137,9 @@ class Filter {
   _avarage(radio, alfa, beta){
       let suma = [0, 0, 0];//Suma: sum[0]-rojo, sum[1]-verde, sum[2]-azul
       let numElem = radio[0] * radio[1];
-      for (var i = 0; i < radio[0]; i ++)
-          for (var j = 0; j < radio[1]; j++) {
-              var site = this.width * (beta + i) + alfa + j;
+      for (var i = 0; i < radio[1]; i ++)
+          for (var j = 0; j < radio[0]; j++) {
+              var site = this.width * (alfa + j) + beta + i;
               suma[0] += this.red[site];
               suma[1] += this.green[site];
               suma[2] += this.blue[site];
@@ -155,12 +155,12 @@ class Filter {
     * @param {number} radio[1] - Alto del cuadrado
   */
   doMosaic(radio){
-    for (var alfa = 0; alfa < this.width; alfa += radio[0])
-      for (var beta = 0; beta < this.height; beta += radio[1]) {
+    for (var alfa = 0; alfa < this.height; alfa += radio[1])
+      for (var beta = 0; beta < this.width; beta += radio[0]) {
         let prom = this._avarage(radio, alfa, beta);
         let rgb = "rgb("+prom[0]+ ","+prom[1]+ ","+prom[2]+")";
         this.canvasContext.fillStyle = rgb;
-        this.canvasContext.fillRect(alfa, beta, radio[0], radio[1]);
+        this.canvasContext.fillRect(beta, alfa, radio[0], radio[1]);
     }
   }
 
@@ -383,13 +383,13 @@ class Filter {
     let font = type.startsWith('f')? type : "Verdana";
     let i = 0; // Contador para poner el texto 
 
-    for (var alfa = 0; alfa < this.width; alfa += radio[0])
-      for (var beta = 0; beta < this.height; beta += radio[1]) {
+    for (var alfa = 0; alfa < this.height; alfa += radio[1])
+      for (var beta = 0; beta < this.width; beta += radio[0]) {
         let prom = this._avarage(radio, alfa, beta);
         letter = this._selectLetter(prom, i++, type, text);
         this.canvasContext.fillStyle = this._selectColor(prom, type);
-        this.canvasContext.font = radio[1] + "px "+ font;
-        this.canvasContext.fillText(letter, alfa, beta, radio[0]);
+        this.canvasContext.font = radio[0] + "px "+ font;
+        this.canvasContext.fillText(letter, beta, alfa, radio[1]);
     }
     
  }

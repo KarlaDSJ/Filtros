@@ -14,6 +14,28 @@
 }
 
 /**
+  Carga de font para el filtro sopa de letras
+*/
+.preloadfont {
+  opacity:0;
+  height:0;
+  width:0;
+  display:inline-block;
+}
+
+#DominoN{
+  font-family: fDominoN;
+}
+
+#DominoB{
+  font-family: fDominoB;
+}
+
+#Naipes{
+  font-family: fNaipes;
+}
+
+/**
  * Estilo para el menú
  * Desplegar opciones de filtro
  */
