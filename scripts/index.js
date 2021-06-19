@@ -3,8 +3,15 @@
 //Se obtienen los elementos necesarios del html
 const img = document.querySelector('#img');
 const canvas = document.querySelector("#canvi");
+const canvasText = document.querySelector("#canviText");
 const info = document.querySelector('#info');
 const slides = document.querySelector('.slidecontainer');
+const dimension = document.querySelector('.dimensionsContainer');
+const waterMark = document.querySelector('.watermarkContainer');
+
+let radio = [3, 3];
+let cte = 50;
+let text = "hola";
 
 /**
    * @desc Se encarga de obtener la imagen que selecciona el usuario
@@ -26,6 +33,9 @@ function loadImage(){
         reader.readAsDataURL(file);
         document.querySelector('#index').style.display = "none";
         slides.style.display = "none";
+        dimension.style.display = "none";
+        waterMark.style.display = "none";
+        canvasText.style.display = "none";
         info.style.display = "block";
     }else
         img.src = "";
@@ -39,9 +49,9 @@ function loadImage(){
    * @desc Se establece la longitud del cuadrante
  */
 function setRadio(){
-    let radio = [3, 3];
-    radio[0] = parseInt(prompt("Ancho del mosaico", "3"));
-    radio[1] = parseInt(prompt("Alto del mosaico", "3"));
+    radio[0] = parseInt(dimension.children[0].children[1].value);
+    radio[1] = parseInt(dimension.children[1].children[1].value);
+
     if(!isNaN(radio[0]))
       radio[0] = radio[0] < 3 || img.width < radio[0]? 3: radio[0];
     if(!isNaN(radio[1]))
@@ -66,6 +76,10 @@ function guardar() {
 */
 function setInfo(name, moreInfo){
   slides.style.display = "none";
+  dimension.style.display = "none";
+  waterMark.style.display = "none";
+  canvasText.style.display = "none";
+  img.style.display = "block";
   info.childNodes[1].innerHTML = name;
   info.childNodes[3].innerHTML = moreInfo; 
 }
@@ -77,11 +91,8 @@ function setInfo(name, moreInfo){
 async function main() {
   await loadImage();
   let f = new Filter(img, canvas);
-  let radio = [3, 3];
-  let cte = 50;
-  let text = "hola"
 
-  // -------- Práctica 1
+  // -------- Práctica 1 --------------------------------------------------------
 
   //Brillo inical y botón para modificarlo
   btnBrillo.onclick = () => {
@@ -93,11 +104,14 @@ async function main() {
   }
 
   //Mosaico
-  btnPixel.onclick = () => {
-    radio = setRadio();
-    let info = "Tamaño del mosaico: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño del mosaico selecciona nuevamente esta opción";
-    setInfo("Mosaico", info);
-    f.doMosaic(radio, [false]);
+  btnPixel.onclick = () => {   
+    setInfo("Mosaico", "Hace que la imagen se vea pixelada <br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      slides.children[3].onclick = setRadio(radio);
+      f.doMosaic(radio);
+    }
+    
   };
 
   //Imagen original
@@ -284,75 +298,118 @@ async function main() {
     f.doConvolution(matrix, 128);
   };
 
-  // -------- Práctica 3
+  // -------- Práctica 3 --------------------------------------------------------
   //Imagen a color con letra M 
   btnMColor.onclick = () => {
-    radio = setRadio();
-    setInfo("Letra M a color", "Imagen formada con letras M a color <br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "ColorM");
+    setInfo("Letra M a color", "Imagen formada con letras M a color <br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "ColorM");
+    }
   };
 
   //Imagen a escala de gris con letra M 
   btnMGris.onclick = () => {
-    radio = setRadio();
-    setInfo("Letra M escala gris", "Imagen formada con letras M a escala de grises <br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doPerPixel((r,g,b)=> { let v = (r * 0.3 + g * 0.59 + b * 0.11);
-      return [v, v, v];})
-    f.doSopaDeLetras(radio, "GrisM");
+    setInfo("Letra M escala gris", "Imagen formada con letras M a escala de grises <br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "GrisM");
+    }
   };
 
   //Imagen con letras a escala de gris
   btnLetrasEscala.onclick = () => {
-    radio = setRadio();
-    setInfo("Letras a escala de gris", "Imagen formada diferentes letras simulando una escala de gris <br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "letrasEscala", text);
+    setInfo("Letras a escala de griss", "Imagen formada diferentes letras simulando una escala de griss <br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "letrasEscala");
+    }
   };
 
   //Imagen a color con letras a escala de gris
   btnLetrasColor.onclick = () => {
-    radio = setRadio();
-    setInfo("Letras a color", "Imagen formada diferentes letras a color <br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "letrasEscalaColor");
-    
+    setInfo("Letras a color", "Imagen formada diferentes letras a color<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "letrasEscalaColor");
+    }
   };
 
   //Imagen a escala de grises con letras a escala de gris
   btnLetrasGris.onclick = () => {
-    radio = setRadio();
-    setInfo("Letras escala de grises", "Imagen formada con diferentes letras a escala de grises <br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doPerPixel((r,g,b)=> { let v = (r * 0.3 + g * 0.59 + b * 0.11);
-      return [v, v, v];})
-    f.doSopaDeLetras(radio, "letrasEscalaGris");
+    setInfo("Letras escala de grises", "Imagen formada con diferentes letras a escala de grises<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "letrasEscalaGris");
+    }
   };
 
   //Imagen hecha con un texto
   btnConTexto.onclick = () => {
-    radio = setRadio();
-    text = prompt("Texto para la imagen", "Holaaa");
-    setInfo("Imagen - texto", "Imagen formada con un texto <br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "texto", text);
+    setInfo("Imagen - texto", "Imagen formada con un texto<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      text = prompt("Texto para la imagen", "Holaaa");
+      f.doSopaDeLetras(radio, "texto", text);
+    }
   };
 
   //Imagen hecha con fichas de dominó negras
   btnDominoB.onclick = () => {
-    radio = setRadio();
-    setInfo("Imagen - Dominó", "Imagen formada con fichas blancas de dominó<br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "fDominoB");
+    setInfo("Imagen - Dominó", "Imagen formada con fichas blancas de dominó<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "fDominoB");
+    }
   };
 
   //Imagen hecha con fichas de dominó blancas
   btnDominoN.onclick = () => {
-    radio = setRadio();
-    setInfo("Imagen - Dominó", "Imagen formada con fichas negras de dominó<br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "fDominoN");
+    setInfo("Imagen - Dominó", "Imagen formada con fichas negras de dominó<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "fDominoN");
+    }
   };
 
   //Imagen hecha con naipes
   btnNaipes.onclick = () => {
-    radio = setRadio();
-    setInfo("Imagen - Naipes", "Imagen formada con naipes<br> Tamaño de la letra: "+ radio[0] + " x "+ radio[1] + "<br> Para cambiar el tamaño selecciona nuevamente esta opción");
-    f.doSopaDeLetras(radio, "fNaipes");
+    setInfo("Imagen - Naipes", "Imagen formada con naipess<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      f.doSopaDeLetras(radio, "fNaipes");
+    }
   };
+
+  // -------- Práctica 4 --------------------------------------------------------
+  //Imagen a color con letra M 
+  btnMarcaAgua.onclick = () => {
+    let s = new Sign();
+    
+    setInfo("Marca de agua", "Da click en el recuadro blanco en el lugar donde deseas poner la marca de agua. <br> También puedes modificar el texto, tamaño y la transparencia.");
+    waterMark.style.display = "block";
+    canvasText.style.display = "block";
+    img.style.display = "none";
+
+    canvasText.addEventListener('click', function(event) { //Obtenemos los valores ancho x alto
+      text = waterMark.children[0].children[1].value;
+      let num = waterMark.children[1].children[1].value;
+      let alpha = waterMark.children[2].children[1].value / 10;
+      let rgb = s.setText(text, num, 
+            [event.offsetX, event.offsetY]);
+      f.doWatermark(rgb, alpha);
+    }, false)
+    
+  }
 }
 
 

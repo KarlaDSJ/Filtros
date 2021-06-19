@@ -6,16 +6,20 @@
     <link rel="stylesheet" href="styles/index.css">
   </head>
   <body>
+      <!-- Menu con todos los filtros disponibles -->
       <ul>
+        <!-- Muestra la imagen -->
         <li><a id="btnAInput">
           <label for="btnInput">Cargar imagen</label>
           <input id="btnInput" type="file" onchange="main()" placeholder="Cargar imagen">
         </a></li>
+        <!-- Guarda la imagen -->
         <li>
           <a id="btnGuardar" type="button" name="guardar" onclick="guardar()">
             Guardar
           </a>
         </li>
+        <!-- Filtros que modifican el color de la imagen -->
         <li class="dropdown">
           <a class="dropbtn">Colores</a>
           <div class="dropdown-content">
@@ -25,6 +29,7 @@
               <a id="btnRGB" type="button" name="RGB">RGB</a>
           </div>
         </li>
+        <!-- Filtros que pasan la imagen a diferentes escalas de gris -->
         <li class="dropdown">
           <a class="dropbtn">Escala de Grises</a>
           <div class="dropdown-content">
@@ -39,6 +44,7 @@
               <a id="btnGray9" type="button" name="gray9">Gris 9</a>
           </div>
         </li>
+        <!-- Filtros que aplican una matriz de convolución a la imagen -->
         <li class="dropdown">
           <a class="dropbtn">Convolución</a>
           <div class="dropdown-content">
@@ -50,6 +56,7 @@
             <a id="btnEmboss" type="button" name="Emboss">Emboss</a>
           </div>
         </li>
+        <!-- Filtros que cuadriculan y consruyen la imagen con letras -->
         <li class="dropdown">
           <a class="dropbtn">Sopa de Letras</a>
           <div class="dropdown-content">
@@ -67,21 +74,30 @@
         <li class="dropdown">
           <a class="dropbtn">Otros</a>
           <div class="dropdown-content">
+              <!-- Cambia el brillo de la imagen -->
               <a id="btnBrillo" type="button" name="invert">Brillo</a>
+              <!-- Da la impresión de una imagen pixelada-->
               <a id="btnPixel" type="button" name="pixel">Mosaico</a>
+              <!-- Cambia el contraste de la imagen -->
               <a id="btnContraste" type="button" name="contraste">Alto Contraste</a>
               <a id="btnInverso" type="button" name="inverso">Alto Contraste (inverso)</a>
+              <!-- Agrega una marca de agua a la imagen -->
+              <a id="btnMarcaAgua" type="button" name="marcaAgua">Marca de agua</a>
           </div>
         </li>
+        <!-- Imagen original -->
         <li>
           <a id="btnReset" type="button" name="reset">Reset</a>
         </li>
      </ul>
+
+     <!-- Da información de lo que hace cada filtro -->
        <div id="info">
             <h1></h1>
             <p></p>
         </div>
 
+      <!-- Modifica los valores RGB de la imagen -->
         <div class="slidecontainer">
           <div id="slideUno">
             <label for="rojoSlide">Rojo</label>
@@ -99,16 +115,52 @@
           <a id="btnProbar" type="button"> Probar </a><br>  
         </div>
 
-        <div id="index"> Da click en "Cargar imagen" para aplicar un filtro</div>
-       <div class="comparar">
-        <img id="img">
-        <canvas id="canvi"></canvas>
-       </div>
+      <!-- Modifica las dimensiones del cuadrante -->
+        <div class="dimensionsContainer">
+          <div id="width">
+            <label for="numberWidth">Ancho:</label>
+            <input type="number" min="0" max="1000" value="5" id="numberWidth">
+          </div>
+          <div id="high">
+            <label for="numberhigh">Alto:</label>
+            <input type="number" min="0" max="1000" value="5" id="numberhigh">
+          </div>
+          
+          <a id="btnProbar" type="button"> Probar </a><br>  
+        </div>
 
+        <div id="index"> Da click en "Cargar imagen" para aplicar un filtro</div>
+      
+      <!-- Modifica el texto y estilo de la marca de agua -->
+       <div class="watermarkContainer">
+        <div id="textMarca">
+          <label for="textMarcaAgua">Texto:</label>
+          <input type="text" value="Marca de Agua" id="textMarcaAgua">
+        </div>
+        <div id="numberMarca">
+          <label for="numberText">Tamaño:</label>
+          <input type="number" min="20" max="100" value="30" id="numberText">
+        </div>
+        <div id="alphaMarca">
+          <label for="alphaText">Alpha: </label>
+          <input type="range" min="0" max="10" value="5" id="alphaText"> 
+        </div>
+      </div>
+
+     <!-- Muestra la imagen original y con el filtro -->
+      <div class="comparar">
+        <img id="img">
+        <canvas id="canviText"></canvas>
+        <canvas id="canvi"></canvas>
+      </div>
+
+     <!-- Pre carga algunas fuentes -->
        <div id="DominoB" class="preloadfont"> . </div>
        <div id="DominoN" class="preloadfont"> . </div>
        <div id="Naipes" class="preloadfont"> . </div>
   </body>
+
   <script src="scripts/Filter.js" charset="utf-8"></script>
+  <script src="scripts/Sign.js" charset="utf-8"></script>
   <script src="scripts/index.js" charset="utf-8"></script>
 </html>

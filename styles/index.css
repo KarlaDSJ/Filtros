@@ -74,7 +74,7 @@ li.dropdown {
   display: inline-block;
 }
 
-#info, .slidecontainer{
+#info, .slidecontainer, .dimensionsContainer, .watermarkContainer{
   display: none;
 }
 
@@ -150,6 +150,7 @@ li.dropdown {
 }
 
 #btnProbar{
+  display: inline-block;
   background-color: #333;
   color: #f1f1f1;
   border-radius: 10%;
@@ -161,3 +162,15 @@ label{
   color: black;
 }
 
+.dimensionsContainer div{
+  display: inline;
+}
+
+.dimensionsContainer div input{
+  width: 55px;
+}
+
+#canviText{
+  display: none;
+  border:1px solid #000000;
+}

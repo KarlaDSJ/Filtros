@@ -448,4 +448,25 @@ class Filter {
     }
     this._setFromRGB(red, green, blue);
   }
+
+  doWatermark(rgb, alpha){
+    let red = Uint8ClampedArray.from(this.red);
+    let green = Uint8ClampedArray.from(this.green);
+    let blue = Uint8ClampedArray.from(this.blue);
+    
+    for(var site = 0; site < this.nPixels; site++){
+        if(rgb[0][site] == 0 && rgb[1][site] == 0 && rgb[2][site] == 0){
+          let r = red[site] * alpha +  rgb[0][site] * (1.0 - alpha);
+          let g = green[site] * alpha + rgb[1][site] * (1.0 - alpha);
+          let b = blue[site] * alpha + rgb[2][site] * (1.0 - alpha);
+
+          red[site] = this._validarRango(r);
+          green[site] = this._validarRango(g);
+          blue[site] = this._validarRango(b);
+        } 
+      }
+
+    this._setFromRGB(red, green, blue);
+  }
+
 }
