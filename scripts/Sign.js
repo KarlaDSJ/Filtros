@@ -44,6 +44,14 @@ class Sign {
     return [red, green, blue];
   }
 
+  /**
+     * @desc Agrega un texto al canvas en la coordenada deseada
+     * @param {string} text - texto 
+     * @param {number} px - tamaño de la letra 
+     * @param {Array} coord - Coordenadas, 
+     *                      coord[0] - x, coord[1] - y
+     * @return {Uint8ClampedArray} - una copia del arreglo (rgb)
+   */
   setText(text, px, coord){
     this.canvasContext.fillStyle = "black";
     this.canvasContext.font = px +"px Arial";

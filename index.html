@@ -71,6 +71,15 @@
             <a id="btnNaipes" type="button" name="Naipes">Naipes</a>
           </div>
         </li>
+        <!-- Filtros que crean la imagen con pequeñas imágenes de la misma-->
+        <li class="dropdown">
+          <a class="dropbtn">Recursiva</a>
+          <div class="dropdown-content">
+            <a id="btnRecursivaBN" type="button" name="RecursivaBN">Escala de Grises</a>
+            <a id="btnRecursivaC" type="button" name="RecursivaC">A color</a>
+          </div>
+        </li>
+        <!-- Otros filtros -->
         <li class="dropdown">
           <a class="dropbtn">Otros</a>
           <div class="dropdown-content">
@@ -150,6 +159,7 @@
      <!-- Muestra la imagen original y con el filtro -->
       <div class="comparar">
         <img id="img">
+        <!-- Para agregar la marca de agua -->
         <canvas id="canviText"></canvas>
         <canvas id="canvi"></canvas>
       </div>

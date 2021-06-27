@@ -65,13 +65,12 @@ class Filter {
     }
 
   /**
-     * @desc Construye una imagen con los valores rgb de cada pixel
-     *       Modifica el objeto canvas del html con la nueva imagen
+     * @desc Obtine el data necesario para poner una imagen en el canvas
      * @param {Uint8ClampedArray} red - una copia del arreglo (color rojo del pixel)
      * @param {Uint8ClampedArray} green - una copia del arreglo (color verde del pixel)
      * @param {Uint8ClampedArray} blue - una copia del arreglo (color azul del pixel)
    */
-  _setFromRGB(red, green, blue){
+  _getImageData(red, green, blue){
     let auxData = new Uint8ClampedArray(this.nPixels*4);
     for(var alfa = 0; alfa < this.nPixels; alfa++){ //Asigna valores rgb
       auxData[alfa*4] = red[alfa];
@@ -79,6 +78,18 @@ class Filter {
       auxData[(alfa*4)+2] = blue[alfa];
       auxData[(alfa*4)+3] = 255;
     }
+    return auxData;
+  }
+
+  /**
+     * @desc Construye una imagen con los valores rgb de cada pixel
+     *       Modifica el objeto canvas del html con la nueva imagen
+     * @param {Uint8ClampedArray} red - una copia del arreglo (color rojo del pixel)
+     * @param {Uint8ClampedArray} green - una copia del arreglo (color verde del pixel)
+     * @param {Uint8ClampedArray} blue - una copia del arreglo (color azul del pixel)
+   */
+  _setFromRGB(red, green, blue){
+    let auxData = this._getImageData(red, green, blue);
     let data = new ImageData(auxData, this.width, this.height);
     this.canvasContext.putImageData(data, 0, 0);
   } 
@@ -95,10 +106,10 @@ class Filter {
    * @return {number} valor RGB del pixel
  */
   _validarRango(valor){
-    if(valor < 0)
-      valor = 0
-    else if(valor > 255)
-      valor = 255
+    if(isNaN(valor) || valor > 255)
+      valor = 255;
+    else if(valor < 0)
+      valor = 0;
 
     return valor;
   }
@@ -137,12 +148,14 @@ class Filter {
   _avarage(radio, alfa, beta){
       let suma = [0, 0, 0];//Suma: sum[0]-rojo, sum[1]-verde, sum[2]-azul
       let numElem = radio[0] * radio[1];
+      let site;
       for (var i = 0; i < radio[1]; i ++)
           for (var j = 0; j < radio[0]; j++) {
-              var site = this.width * (alfa + j) + beta + i;
-              suma[0] += this.red[site];
-              suma[1] += this.green[site];
-              suma[2] += this.blue[site];
+              site = this.width * (alfa + j) + beta + i;
+              site = site > this.nPixels? this.nPixels - 1: site;
+              suma[0] += this._validarRango(this.red[site]);
+              suma[1] += this._validarRango(this.green[site]);
+              suma[2] += this._validarRango(this.blue[site]);
           }
       suma = [suma[0]/numElem, suma[1]/numElem, suma[2]/numElem];//promedio
       return suma;
@@ -449,6 +462,13 @@ class Filter {
     this._setFromRGB(red, green, blue);
   }
 
+  /**
+     * @desc Agrega una marca de agua a la imagen
+     * @param {Uint8ClampedArray} rgb - Valores rgb de la marca de agua
+     *                            rgb[0]-rojo, rgb[1]-verde, rgb[2]-azul
+     * @param {number} alpha - Valor alpha
+     *                        Tranparencia de la marca de agua
+   */
   doWatermark(rgb, alpha){
     let red = Uint8ClampedArray.from(this.red);
     let green = Uint8ClampedArray.from(this.green);
@@ -467,6 +487,93 @@ class Filter {
       }
 
     this._setFromRGB(red, green, blue);
+  }
+
+  /**
+    * @desc Obtiene la imagen del canvas 
+    * @return {HTMLImageElement} imagen
+  */
+  _saveImage(){
+    var image = new Image();
+    image.src = canvas.toDataURL();
+    return image;
+  }
+
+  /**
+    * @desc Genera 30 imágenes a escala de grises con distinto brillo
+    * @return {Array} Arreglo de atiquetas img
+  */
+  generateImagesBN(){
+    let images = [],
+        j = 0;
+
+    for (let i = -127; i < 128; i += 8.5) {
+      this.doPerPixel((r,g,b)=> { let v = (r + g + b) / 3 + i;
+        return [v, v, v];})
+      images[j++] = this._saveImage();
+    }
+
+    return images;
+  }
+
+  /**
+    * @desc Genera imágenes con diferentes micas de color de acuerdo a una cuadrícula
+    * @return {Map} Mapa de atiquetas img, key = el promedio de la cuadrícula
+  */
+  generateImagesC(){
+    let images = new Map();
+
+    for (var alfa = 0; alfa < this.height; alfa += radio[1])
+      for (var beta = 0; beta < this.width; beta += radio[0]) {
+        let prom = this._avarage(radio, alfa, beta);
+        let name = prom[0]+""+prom[1]+""+prom[2];
+          if(!images.has(name)){
+            this.doPerPixel((r,g,b)=> [r & prom[0], g & prom[1], b & prom[2]]);
+            images.set(name, this._saveImage());
+          }
+       }
+
+    
+
+    return images;
+  }
+
+  /**
+    * @desc Selecciona una de las 30 imágenes en gris según el promedio
+    * @param {Array} prom - Arreglo con el promedio del cuadrado por colores
+    *                 [0] - promedio del color rojo
+    *                 [1] - promedio del color verde
+    *                 [2] - promedio del color azul
+    * @return {number} Número de la imagen que le corresponde
+  */
+  _getValue(prom){
+    let gris = (prom[0] + prom[1] + prom[2])/ 3;
+    let value = Math.round(gris / 8.5);
+    return value > 29? 29: value;
+  }
+
+  /**
+    * @desc Genera una imagen compuesta por pequeñas imágenes de la misma
+    * @param {number} radio[0] - Ancho del cuadrado
+    * @param {number} radio[1] - Alto del cuadrado
+    * @param {Array / Map} images - Imágenes (<img>)
+    * @param {boolean} isColor - si es a color la imagen 
+  */
+  doRecursion(radio, images, isColor){
+    let value; 
+
+    for (var alfa = 0; alfa < this.height; alfa += radio[1])
+      for (var beta = 0; beta < this.width; beta += radio[0]) {
+        let prom = this._avarage(radio, alfa, beta);
+        if(isColor)
+          value = images.get(prom[0]+""+prom[1]+""+prom[2]);
+        else 
+          value = images[this._getValue(prom)];   
+
+        this.canvasContext.drawImage(value, beta, alfa, radio[0], radio[1]);
+    }
+
+    
   }
 
 }

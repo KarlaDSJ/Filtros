@@ -382,7 +382,7 @@ async function main() {
 
   //Imagen hecha con naipes
   btnNaipes.onclick = () => {
-    setInfo("Imagen - Naipes", "Imagen formada con naipess<br> Tamaño del pixel:");
+    setInfo("Imagen - Naipes", "Imagen formada con naipes<br> Tamaño del pixel:");
     dimension.style.display = "block";
     dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
       dimension.children[3].onclick = setRadio(radio);
@@ -408,8 +408,31 @@ async function main() {
             [event.offsetX, event.offsetY]);
       f.doWatermark(rgb, alpha);
     }, false)
-    
   }
+
+  // -------- Práctica 5 --------------------------------------------------------
+  //Imagen Recursiva escala de grises 
+  btnRecursivaBN.onclick = () => {
+    setInfo("Imagen recursiva", "Imagen formada con la misma imagen a escala de grises<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      let images = f.generateImagesBN();
+      f.doRecursion(radio, images, false);
+    }
+  };
+
+  //Imagen Recursiva color
+  btnRecursivaC.onclick = () => {
+    setInfo("Imagen recursiva", "Imagen formada con la misma imagen a color<br> Tamaño del pixel:");
+    dimension.style.display = "block";
+    console.log("H "+ img.width + " W "+ img.height);
+    dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
+      dimension.children[3].onclick = setRadio(radio);
+      let images = f.generateImagesC();
+      f.doRecursion(radio, images, true);
+    }
+  };
 }
 
 
