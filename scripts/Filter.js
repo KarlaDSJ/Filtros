@@ -27,17 +27,24 @@ class Filter {
     this.canvasContext = canvas.getContext("2d");
     this.canvasContext.drawImage(this.img, 0, 0, this.width, this.height);
 
-    this.red = new Uint8ClampedArray(this.nPixels);
-    this.blue = new Uint8ClampedArray(this.nPixels);
-    this.green = new Uint8ClampedArray(this.nPixels);
+    //Valores originales
+    this.redOriginal = new Uint8ClampedArray(this.nPixels);
+    this.blueOriginal = new Uint8ClampedArray(this.nPixels);
+    this.greenOriginal = new Uint8ClampedArray(this.nPixels);
 
     //Se obtienen los valores respectivos por cada pixel
     let data = this.canvasContext.getImageData(0, 0, this.width, this.height);
     for(var alfa = 0; alfa < this.nPixels; alfa++){
-      this.red[alfa] = data.data[alfa*4];
-      this.green[alfa] = data.data[(alfa*4)+1];
-      this.blue[alfa] = data.data[(alfa*4)+2];
+      this.redOriginal[alfa] = data.data[alfa*4];
+      this.greenOriginal[alfa] = data.data[(alfa*4)+1];
+      this.blueOriginal[alfa] = data.data[(alfa*4)+2];
     }
+
+    //Para modificar y aplicar varios filtros
+    this.red = Uint8ClampedArray.from(this.redOriginal);
+    this.green = Uint8ClampedArray.from(this.greenOriginal);
+    this.blue = Uint8ClampedArray.from(this.blueOriginal);
+
   }
 
   /**
@@ -45,7 +52,7 @@ class Filter {
      * @return {Uint8ClampedArray} - una copia del arreglo (color rojo del pixel)
    */
   getRed(){
-    return Uint8ClampedArray.from(this.red);
+    return Uint8ClampedArray.from(this.redOriginal);
   }
 
   /**
@@ -53,7 +60,7 @@ class Filter {
      * @return {Uint8ClampedArray} - una copia del arreglo (color verde del pixel)
    */
   getGreen(){
-    return Uint8ClampedArray.from(this.green);
+    return Uint8ClampedArray.from(this.greenOriginal);
   }
 
   /**
@@ -61,24 +68,20 @@ class Filter {
      * @return {Uint8ClampedArray} - una copia del arreglo (color azul del pixel)
    */
   getBlue(){
-    return Uint8ClampedArray.from(this.blue);
+    return Uint8ClampedArray.from(this.blueOriginal);
     }
 
   /**
-     * @desc Obtine el data necesario para poner una imagen en el canvas
-     * @param {Uint8ClampedArray} red - una copia del arreglo (color rojo del pixel)
-     * @param {Uint8ClampedArray} green - una copia del arreglo (color verde del pixel)
-     * @param {Uint8ClampedArray} blue - una copia del arreglo (color azul del pixel)
+     * @desc Actualiza el rgb de la imagen
    */
-  _getImageData(red, green, blue){
-    let auxData = new Uint8ClampedArray(this.nPixels*4);
-    for(var alfa = 0; alfa < this.nPixels; alfa++){ //Asigna valores rgb
-      auxData[alfa*4] = red[alfa];
-      auxData[(alfa*4)+1] = green[alfa];
-      auxData[(alfa*4)+2] = blue[alfa];
-      auxData[(alfa*4)+3] = 255;
+  _updateImageData(){
+    let data = this.canvasContext.getImageData(0, 0, this.width, this.height);
+    for(var alfa = 0; alfa < this.nPixels; alfa++){
+      this.red[alfa] = data.data[alfa*4];
+      this.green[alfa] = data.data[(alfa*4)+1];
+      this.blue[alfa] = data.data[(alfa*4)+2];
     }
-    return auxData;
+
   }
 
   /**
@@ -89,7 +92,13 @@ class Filter {
      * @param {Uint8ClampedArray} blue - una copia del arreglo (color azul del pixel)
    */
   _setFromRGB(red, green, blue){
-    let auxData = this._getImageData(red, green, blue);
+    let auxData = new Uint8ClampedArray(this.nPixels*4);
+    for(var alfa = 0; alfa < this.nPixels; alfa++){ //Asigna valores rgb
+      auxData[alfa*4] = red[alfa];
+      auxData[(alfa*4)+1] = green[alfa];
+      auxData[(alfa*4)+2] = blue[alfa];
+      auxData[(alfa*4)+3] = 255;
+    }
     let data = new ImageData(auxData, this.width, this.height);
     this.canvasContext.putImageData(data, 0, 0);
   } 
@@ -98,7 +107,11 @@ class Filter {
      * @desc Muestra la imagen original en el objeto canvas del html
    */
   reset(){
-    this._setFromRGB(this.red, this.green, this.blue);
+    this.red = Uint8ClampedArray.from(this.redOriginal);
+    this.green = Uint8ClampedArray.from(this.greenOriginal);
+    this.blue = Uint8ClampedArray.from(this.blueOriginal);
+
+    this._setFromRGB(this.redOriginal, this.greenOriginal, this.blueOriginal);
   }
 
   /**
@@ -121,16 +134,13 @@ class Filter {
      *                   que se le hará a cada color del pixel
    */
    doPerPixel(f){
-    let red = Uint8ClampedArray.from(this.red);
-    let green = Uint8ClampedArray.from(this.green);
-    let blue = Uint8ClampedArray.from(this.blue);
-    for(var alfa = 0; alfa < red.length; alfa++){
-      let v = f(red[alfa], green[alfa], blue[alfa]);
-      red[alfa] = this._validarRango(v[0]);
-      green[alfa] = this._validarRango(v[1]);
-      blue[alfa] = this._validarRango(v[2]);
+    for(var alfa = 0; alfa < this.red.length; alfa++){
+      let v = f(this.redOriginal[alfa], this.greenOriginal[alfa], this.blueOriginal[alfa]);
+      this.red[alfa] = this._validarRango(v[0]);
+      this.green[alfa] = this._validarRango(v[1]);
+      this.blue[alfa] = this._validarRango(v[2]);
     }
-    this._setFromRGB(red, green, blue);
+    this._setFromRGB(this.red, this.green, this.blue);
    }
 
   /**
@@ -175,6 +185,7 @@ class Filter {
         this.canvasContext.fillStyle = rgb;
         this.canvasContext.fillRect(beta, alfa, radio[0], radio[1]);
     }
+    this._updateImageData();
   }
 
  /**
@@ -404,7 +415,6 @@ class Filter {
         this.canvasContext.font = radio[0] + "px "+ font;
         this.canvasContext.fillText(letter, beta, alfa, radio[1]);
     }
-    
  }
 
   /**
@@ -445,21 +455,19 @@ class Filter {
   */
   doConvolution(matrix, bias = 0){
     let factor = this._getFactor(matrix);
-    let red = Uint8ClampedArray.from(this.red);
-    let green = Uint8ClampedArray.from(this.green);
-    let blue = Uint8ClampedArray.from(this.blue);
-    console.log(factor);
+
     for (var i = 0; i < this.nPixels; i ++){
       //Calculamos alto y ancho (ubicación del pixel)
       var h = Math.trunc(i / this.height);
       var w = i % this.height;
       var valor =  this._applyMatrix(matrix, w, h); //aplicamos la matriz
       //Asignamos los nuevos valores
-      red[w * this.width + h] = this._validarRango(factor * valor[0] + bias);
-      green[w * this.width + h] = this._validarRango(factor * valor[1] + bias);
-      blue[w * this.width + h] = this._validarRango(factor * valor[2] + bias);
+      this.red[w * this.width + h] = this._validarRango(factor * valor[0] + bias);
+      this.green[w * this.width + h] = this._validarRango(factor * valor[1] + bias);
+      this.blue[w * this.width + h] = this._validarRango(factor * valor[2] + bias);
     }
-    this._setFromRGB(red, green, blue);
+    this._setFromRGB(this.red, this.green, this.blue);
+    this._updateImageData();
   }
 
   /**
@@ -470,110 +478,88 @@ class Filter {
      *                        Tranparencia de la marca de agua
    */
   doWatermark(rgb, alpha){
-    let red = Uint8ClampedArray.from(this.red);
-    let green = Uint8ClampedArray.from(this.green);
-    let blue = Uint8ClampedArray.from(this.blue);
-    
     for(var site = 0; site < this.nPixels; site++){
         if(rgb[0][site] == 0 && rgb[1][site] == 0 && rgb[2][site] == 0){
-          let r = red[site] * alpha +  rgb[0][site] * (1.0 - alpha);
-          let g = green[site] * alpha + rgb[1][site] * (1.0 - alpha);
-          let b = blue[site] * alpha + rgb[2][site] * (1.0 - alpha);
+          let r = this.red[site] * alpha +  rgb[0][site] * (1.0 - alpha);
+          let g = this.green[site] * alpha + rgb[1][site] * (1.0 - alpha);
+          let b = this.blue[site] * alpha + rgb[2][site] * (1.0 - alpha);
 
-          red[site] = this._validarRango(r);
-          green[site] = this._validarRango(g);
-          blue[site] = this._validarRango(b);
+          this.red[site] = this._validarRango(r);
+          this.green[site] = this._validarRango(g);
+          this.blue[site] = this._validarRango(b);
         } 
       }
 
-    this._setFromRGB(red, green, blue);
+    this._setFromRGB(this.red, this.green, this.blue);
   }
 
-  /**
-    * @desc Obtiene la imagen del canvas 
-    * @return {HTMLImageElement} imagen
-  */
-  _saveImage(){
-    var image = new Image();
-    image.src = canvas.toDataURL();
-    return image;
-  }
 
   /**
-    * @desc Genera 30 imágenes a escala de grises con distinto brillo
-    * @return {Array} Arreglo de atiquetas img
-  */
-  generateImagesBN(){
-    let images = [],
-        j = 0;
-
-    for (let i = -127; i < 128; i += 8.5) {
-      this.doPerPixel((r,g,b)=> { let v = (r + g + b) / 3 + i;
-        return [v, v, v];})
-      images[j++] = this._saveImage();
+     * @desc Aplica una mica en escala de grises
+     * @param {Uint8ClampedArray} red - una copia del arreglo (color rojo del pixel)
+     * @param {Uint8ClampedArray} green - una copia del arreglo (color verde del pixel)
+     * @param {Uint8ClampedArray} blue - una copia del arreglo (color azul del pixel)
+   */
+  _doMicaBN(r, g, b){
+    for(var alfa = 0; alfa < this.red.length; alfa++){
+      let value = (this.red[alfa] + this.green[alfa] + this.blue[alfa]) / 3
+      this.red[alfa] = this._validarRango(value & r[alfa]);
+      this.green[alfa] = this._validarRango(value & g[alfa]);
+      this.blue[alfa] = this._validarRango(value & b[alfa]);
     }
-
-    return images;
   }
 
   /**
-    * @desc Genera imágenes con diferentes micas de color de acuerdo a una cuadrícula
-    * @return {Map} Mapa de atiquetas img, key = el promedio de la cuadrícula
-  */
-  generateImagesC(){
-    let images = new Map();
+     * @desc Aplica una mica a color
+     * @param {Uint8ClampedArray} red - una copia del arreglo (color rojo del pixel)
+     * @param {Uint8ClampedArray} green - una copia del arreglo (color verde del pixel)
+     * @param {Uint8ClampedArray} blue - una copia del arreglo (color azul del pixel)
+   */
+  _doMicaC(r, g, b){
+    for(var alfa = 0; alfa < this.red.length; alfa++){
+      this.red[alfa] = this._validarRango(this.red[alfa] & r[alfa]);
+      this.green[alfa] = this._validarRango(this.green[alfa] & g[alfa]);
+      this.blue[alfa] = this._validarRango(this.blue[alfa] & b[alfa]);
+    }
+  }
 
+  /**
+    * @desc Genera una cuadrícula, en cada una pone la imagen 
+    * @param {number} radio[0] - Ancho del cuadrado
+    * @param {number} radio[1] - Alto del cuadrado
+  */
+  _doRecursionImage(radio){
     for (var alfa = 0; alfa < this.height; alfa += radio[1])
       for (var beta = 0; beta < this.width; beta += radio[0]) {
-        let prom = this._avarage(radio, alfa, beta);
-        let name = prom[0]+""+prom[1]+""+prom[2];
-          if(!images.has(name)){
-            this.doPerPixel((r,g,b)=> [r & prom[0], g & prom[1], b & prom[2]]);
-            images.set(name, this._saveImage());
-          }
-       }
-
+        this.canvasContext.drawImage(this.img, beta, alfa, radio[0], radio[1]);
+    }
     
-
-    return images;
-  }
-
-  /**
-    * @desc Selecciona una de las 30 imágenes en gris según el promedio
-    * @param {Array} prom - Arreglo con el promedio del cuadrado por colores
-    *                 [0] - promedio del color rojo
-    *                 [1] - promedio del color verde
-    *                 [2] - promedio del color azul
-    * @return {number} Número de la imagen que le corresponde
-  */
-  _getValue(prom){
-    let gris = (prom[0] + prom[1] + prom[2])/ 3;
-    let value = Math.round(gris / 8.5);
-    return value > 29? 29: value;
+    this._updateImageData();
   }
 
   /**
     * @desc Genera una imagen compuesta por pequeñas imágenes de la misma
+    *       Genera una mica de color y hace AND con la imagen de imágenes
     * @param {number} radio[0] - Ancho del cuadrado
     * @param {number} radio[1] - Alto del cuadrado
-    * @param {Array / Map} images - Imágenes (<img>)
     * @param {boolean} isColor - si es a color la imagen 
   */
-  doRecursion(radio, images, isColor){
-    let value; 
+  doRecursion(radio, isColor){
+    //Mica de colores
+    let r = Uint8ClampedArray.from(this.red),
+        g = Uint8ClampedArray.from(this.green),
+        b = Uint8ClampedArray.from(this.blue);
 
-    for (var alfa = 0; alfa < this.height; alfa += radio[1])
-      for (var beta = 0; beta < this.width; beta += radio[0]) {
-        let prom = this._avarage(radio, alfa, beta);
-        if(isColor)
-          value = images.get(prom[0]+""+prom[1]+""+prom[2]);
-        else 
-          value = images[this._getValue(prom)];   
+    //Imágenes de Imágenes
+    this._doRecursionImage(radio);
 
-        this.canvasContext.drawImage(value, beta, alfa, radio[0], radio[1]);
-    }
+    //Combinamos la imágenes
+    if(isColor)
+      this._doMicaC(r, g, b);
+    else
+      this._doMicaBN(r, g, b);  
 
-    
+    this._setFromRGB(this.red, this.green, this.blue);
   }
 
 }

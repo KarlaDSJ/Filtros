@@ -417,8 +417,12 @@ async function main() {
     dimension.style.display = "block";
     dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
       dimension.children[3].onclick = setRadio(radio);
-      let images = f.generateImagesBN();
-      f.doRecursion(radio, images, false);
+      //let images = f.generateImagesBN();
+      //f.doRecursion(radio, images, false);
+      f.doPerPixel((r,g,b)=> { let v = (r + g + b) / 3;
+        return [v, v, v];})
+      f.doMosaic(radio);
+      f.doRecursion(radio, false);
     }
   };
 
@@ -426,11 +430,12 @@ async function main() {
   btnRecursivaC.onclick = () => {
     setInfo("Imagen recursiva", "Imagen formada con la misma imagen a color<br> Tamaño del pixel:");
     dimension.style.display = "block";
-    console.log("H "+ img.width + " W "+ img.height);
     dimension.children[2].onclick = () =>{ //Obtenemos los valores ancho x alto
       dimension.children[3].onclick = setRadio(radio);
-      let images = f.generateImagesC();
-      f.doRecursion(radio, images, true);
+      //let images = f.generateImagesC();
+      //f.doRecursion(radio, images, true);
+      f.doMosaic(radio);
+      f.doRecursion(radio, true);
     }
   };
 }
