@@ -10,17 +10,17 @@ class Sign {
     /**
        * @desc Coloca la imagen en el canvas
        *       Extrae la información de los pixeles
-       * @param {HTMLImageElement} img - Objeto html con la imagen
-       * @param {HTMLCanvasElement} canvas - Objeto html al cual se le
-       *                 aplicarán los filtros
+       * @param {Filter} f- Objeto html con la imagen
      */
-  constructor(){
+  constructor(f){
     this.canvasText = canvasText;
     this.canvasContext = canvasText.getContext("2d");
     this.canvasText.setAttribute("width", img.width);
     this.canvasText.setAttribute("height", img.height);
     this.canvasContext.fillStyle = "white";
     this.canvasContext.fillRect(0, 0, canvasText.width, canvasText.height);
+
+    this.filtro = f;
   }
 
   /**
@@ -56,8 +56,29 @@ class Sign {
     this.canvasContext.fillStyle = "black";
     this.canvasContext.font = px +"px Arial";
     this.canvasContext.fillText(text, coord[0], coord[1]);
+  }
 
-    return this._getRGB();
+  /**
+     * @desc Agrega una marca de agua a la imagen
+     * @param {number} alpha - Valor alpha
+     *                        Tranparencia de la marca de agua
+   */
+   doWatermark(alpha){
+    let rgb = this._getRGB();
+
+    for(var site = 0; site < this.filtro.nPixels; site++){
+        if(rgb[0][site] == 0 && rgb[1][site] == 0 && rgb[2][site] == 0){
+          let r = this.filtro.red[site] * alpha +  rgb[0][site] * (1.0 - alpha);
+          let g = this.filtro.green[site] * alpha + rgb[1][site] * (1.0 - alpha);
+          let b = this.filtro.blue[site] * alpha + rgb[2][site] * (1.0 - alpha);
+
+          this.filtro.red[site] = this.filtro._validarRango(r);
+          this.filtro.green[site] = this.filtro._validarRango(g);
+          this.filtro.blue[site] = this.filtro._validarRango(b);
+        } 
+      }
+
+    this.filtro._setFromRGB(this.filtro.red, this.filtro.green, this.filtro.blue);
   }
 
 }
