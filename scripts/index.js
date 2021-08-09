@@ -8,6 +8,7 @@ const info = document.querySelector('#info');
 const slides = document.querySelector('.slidecontainer');
 const dimension = document.querySelector('.dimensionsContainer');
 const waterMark = document.querySelector('.watermarkContainer');
+const maxMin = document.querySelector('.maxMin');
 
 let radio = [3, 3];
 let cte = 50;
@@ -16,6 +17,7 @@ let f; //filtro
 let fSopa; //filtro sopa de letras
 let fRecursion; //filtro de recursión 
 let fConvolution; //filtro de convolución
+let fSemitones; //filtro de convolución
 let s; //filtro marca de agua
 
 /**
@@ -41,6 +43,7 @@ function loadImage(){
         dimension.style.display = "none";
         waterMark.style.display = "none";
         canvasText.style.display = "none";
+        maxMin.style.display = "none";
         info.style.display = "block";
     }else
         img.src = "";
@@ -84,6 +87,7 @@ function setInfo(name, moreInfo){
   dimension.style.display = "none";
   waterMark.style.display = "none";
   canvasText.style.display = "none";
+  maxMin.style.display = "none";
   img.style.display = "block";
   info.childNodes[1].innerHTML = name;
   info.childNodes[3].innerHTML = moreInfo; 
@@ -99,6 +103,7 @@ async function main() {
   fSopa = new SopaDeLetras(f, canvas);
   fRecursion = new RecursionImage(f, canvas);
   fConvolution = new Convolution(f, canvas);
+  fSemitones = new Semitones(f, canvas);
   s = new Sign(f);
 }
 

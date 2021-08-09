@@ -174,3 +174,8 @@ label{
   display: none;
   border:1px solid #000000;
 }
+
+.maxMin{
+  display: none;
+  justify-content: center;
+}

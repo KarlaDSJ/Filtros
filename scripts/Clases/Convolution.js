@@ -2,8 +2,7 @@
 
 /**
  * @class
- * Clase filtro Sopa de letras que se le aplican al canvas dado una
- * imagen.
+ * Clase que aplica una matriz de convolución a una imagen
  */
 class Convolution {
     /**
@@ -68,6 +67,37 @@ class Convolution {
     }
     this.filtro._setFromRGB(this.filtro.red, this.filtro.green, this.filtro.blue);
     this.filtro._updateImageData();
+  }
+
+  /**
+   * Permite incrementar los puntos negros o minimizarlos
+   * Recorre cada pixel, coloca una matriz y toma el mayor o el menor
+   * @param {number} radio[0] - Ancho del cuadrado
+   * @param {number} radio[1] - Alto del cuadrado 
+   * @param {boolean} isMax
+   */
+   doMaxMin(radio, isMax){
+    let val = [];
+    let site, maxMin;
+  
+    for (var alfa = 0; alfa < this.filtro.height; alfa ++)
+      for (var beta = 0; beta < this.filtro.width; beta ++) {
+        //Matriz 
+        for (var i = 0; i < radio[1]; i ++)
+          for (var j = 0; j < radio[0]; j++) {
+              site = this.filtro.width * (alfa + j) + beta + i;
+              site = site > this.filtro.nPixels? this.filtro.nPixels - 1: site;
+              //tomamos sólo el valor rojo porque al estar en escala de grises los demás son iguales
+              val.push(this.filtro.red[site]);
+          }
+          //Obtnemos el mínimo o el máximo 
+          maxMin = isMax? Math.max.apply(Math, val): Math.min.apply(Math,val);
+          this.filtro.red[site] = maxMin;
+          this.filtro.green[site] = maxMin;
+          this.filtro.blue[site] = maxMin;
+          val = [];
+    }
+    this.filtro._setFromRGB(this.filtro.red, this.filtro.green, this.filtro.blue);
   }
 
 }

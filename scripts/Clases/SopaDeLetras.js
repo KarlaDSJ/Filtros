@@ -2,8 +2,8 @@
 
 /**
  * @class
- * Clase filtro Sopa de letras que se le aplican al canvas dado una
- * imagen.
+ * Clase filtro Sopa de letras, crea la imagen con legras, fichas 
+ * de dominó o naipes 
  */
 class SopaDeLetras {
     /**

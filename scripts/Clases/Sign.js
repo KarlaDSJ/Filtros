@@ -3,8 +3,7 @@
 
 /**
  * @class
- * Clase filtro para controlar los filtros que se le aplican al canvas dado una
- * imagen.
+ * Clase auxiliar para crear el efecto de marca de agua
  */
 class Sign {
     /**

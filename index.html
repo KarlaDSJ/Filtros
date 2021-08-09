@@ -79,6 +79,18 @@
             <a id="btnRecursivaC" type="button" name="RecursivaC">A color</a>
           </div>
         </li>
+        <!-- Filtros que crean la imagen con Círculos, haciendo el efecto de semitonos -->
+        <li class="dropdown">
+          <a class="dropbtn">Dithering</a>
+          <div class="dropdown-content">
+            <a id="btnCirc2x2" type="button" name="Circ2x2">Círculos 2x2</a>
+            <a id="btnCirc3x3" type="button" name="Circ3x3">Círculos 3x3</a>
+            <a id="btnCirc4" type="button" name="Circ4">Círculos (3x3 variación)</a>
+            <a id="btnAzar" type="button" name="Azar">Al azar</a>
+            <a id="btnOrdenado" type="button" name="Ordenado">Ordenado</a>
+            <a id="btnDisperso" type="button" name="Disperso">Disperso</a>
+          </div>
+        </li>
         <!-- Otros filtros -->
         <li class="dropdown">
           <a class="dropbtn">Otros</a>
@@ -92,6 +104,8 @@
               <a id="btnInverso" type="button" name="inverso">Alto Contraste (inverso)</a>
               <!-- Agrega una marca de agua a la imagen -->
               <a id="btnMarcaAgua" type="button" name="marcaAgua">Marca de agua</a>
+              <!-- Filtro permite incrementar los puntos negros o minimizarlos -->
+              <a id="btnMaxMin" type="button" name="maxMin">Máximo y mínimo</a>
           </div>
         </li>
         <!-- Imagen original -->
@@ -122,6 +136,14 @@
           </div>
           
           <a id="btnProbar" type="button"> Probar </a><br>  
+        </div>
+
+      <!-- Para seleccioanr el filtro Máx o Min -->
+        <div class="maxMin">
+          <input type="radio" id="maxm" name="filtro" value="max" checked>
+          <label for="max">Máx</label><br>
+          <input type="radio" id="maxm" name="filtro" value="min">
+          <label for="min">Min</label><br>
         </div>
 
       <!-- Modifica las dimensiones del cuadrante -->
@@ -176,12 +198,16 @@
   <script src="scripts/Practicas/Practica03.js" charset="utf-8"></script>
   <script src="scripts/Practicas/Practica04.js" charset="utf-8"></script>
   <script src="scripts/Practicas/Practica05.js" charset="utf-8"></script>
+  <script src="scripts/Practicas/Practica06.js" charset="utf-8"></script>
+  <script src="scripts/Practicas/Practica07.js" charset="utf-8"></script>
+  <script src="scripts/Practicas/Practica08.js" charset="utf-8"></script>
   <!-- --------------- Clases --------------------- -->
   <script src="scripts/Clases/Filter.js" charset="utf-8"></script>
   <script src="scripts/Clases/SopaDeLetras.js" charset="utf-8"></script>
   <script src="scripts/Clases/RecursionImage.js" charset="utf-8"></script>
   <script src="scripts/Clases/Convolution.js" charset="utf-8"></script>
   <script src="scripts/Clases/Sign.js" charset="utf-8"></script>
+  <script src="scripts/Clases/Semitones.js" charset="utf-8"></script>
   <!-- -------------------------------------------- -->
   <script src="scripts/index.js" charset="utf-8"></script>
 </html>

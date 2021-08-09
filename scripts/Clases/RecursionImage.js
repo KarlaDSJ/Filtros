@@ -2,8 +2,7 @@
 
 /**
  * @class
- * Clase filtro Recursión de una imágen que se le aplican al canvas dado una
- * imagen.
+ * Clase filtro Recursión crea una imagen con imágenes de la misma
  */
 class RecursionImage {
     /**
