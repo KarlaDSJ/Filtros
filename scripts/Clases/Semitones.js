@@ -24,7 +24,8 @@ class Semitones {
    */
   _getValue(prom, numImages){
     let gris = Math.round((prom[0] + prom[1] + prom[2])/ 3);
-    return gris % numImages;
+    //return gris % numImages;
+    return Math.round((gris/255)*(numImages-1));
   }
 
   /**
@@ -61,15 +62,15 @@ class Semitones {
    */
   doSemitonos(radio, images){
     //limpiamos el canvas
-    console.log("algo");
     this.canvasContext.clearRect(0,0,canvas.width,canvas.height);
        
-    for (var alfa = 0; alfa < this.height; alfa += radio[1])
-      for (var beta = 0; beta < this.width; beta += radio[0]) {
-        var prom = this._avarage(radio, alfa, beta);
-        var value = this._getValue(prom, num);
+    for (var alfa = 0; alfa < this.filtro.height; alfa += radio[1])
+      for (var beta = 0; beta < this.filtro.width; beta += radio[0]) {
+        var prom = this.filtro._avarage(radio, alfa, beta);
+        var value = this._getValue(prom, images.length);
         this.canvasContext.drawImage(images[value], beta, alfa, radio[0], radio[1]);
       }
+    this.filtro._updateImageData();
   }
 
   /**

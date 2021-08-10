@@ -9,6 +9,6 @@
       let filtro = maxMin.children[0].checked;
       f.doPerPixel((r,g,b)=> { let v = (r + g + b) / 3; //Pasamos a escala de grises
         return [v, v, v];})
-      fConvolution.doMaxMin(radio, filtro);
+      fConvolution.doConvolution(Array(radio[0]), 0, filtro);
     }
   };
