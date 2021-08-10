@@ -14,6 +14,7 @@ class Convolution {
   constructor(f, canvas){
     this.filtro = f;
     this.canvasContext = canvas.getContext("2d");
+    this.aux = new Uint8ClampedArray(this.filtro.red);
   }
 
   /**
@@ -43,7 +44,7 @@ class Convolution {
    */
   _applyMatrix(matrix, alfa, beta, isMax) {
     let valor = [0, 0, 0]; // [0] - r, [1] - g, [2] - b
-    let val = [];
+    let val = this.aux[alfa* this.filtro.width + beta];
     var length = matrix.length;
     for (var i = 0; i < length; i ++)
       for (var j = 0; j < length; j++) {
@@ -54,13 +55,15 @@ class Convolution {
           valor[0] += this.filtro.red[site] * matrix[i][j];
           valor[1] += this.filtro.green[site] * matrix[i][j];
           valor[2] += this.filtro.blue[site] * matrix[i][j];
-        } else 
-          val.push(this.filtro.red[site]);
+        } else { //Encontramos al Max o al Min
+          if(isMax)
+            val = Math.max(val, this.aux[site]);
+          else
+            val = Math.min(val, this.aux[site]);
+        }
       }
-    if(isMax != 3){
-      val[0] = isMax? Math.max.apply(null,val): Math.min.apply(null, val);
-      valor[1] = valor[2] = valor[0] = val[0];
-    }
+    if(isMax != 3)
+      valor[1] = valor[2] = valor[0] = val;
     return valor;
   }
 
